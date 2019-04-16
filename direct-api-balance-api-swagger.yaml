@@ -1,0 +1,452 @@
+swagger: '2.0'
+info:
+  version: v2.0.0
+  title: Account balances information Data
+  description: Swagger specification for transactions enterprise service
+host: api.lbg.xyz
+basePath: /es-balance/v2.0
+schemes:
+  - https
+produces:
+  - application/json
+tags:
+  - name: Balances
+    description: Endpoint for getting Balances for an account
+paths:
+  /balances:
+    get:
+      tags:
+        - Balances
+      description: Gets `Balances` records
+      produces:
+        - application/json
+      parameters:
+        - name: AccountNumber
+          in: query
+          description: Account number to get balances
+          required: true
+          type: string
+          maxLength: 8
+          pattern: '^[0-9]+$'
+        - name: SortCode
+          in: query
+          description: Sort Code
+          type: string
+          maxLength: 6
+          pattern: '^[0-9]+$'
+          required: false
+        - name: ProductCategory
+          in: query
+          description: Product Category
+          type: string
+          enum:
+            - PCA
+            - BCA
+            - PSA
+            - BSA
+          required: true
+        - name: Channel
+          in: query
+          description: Product Category
+          type: string
+          enum:
+            - RC
+            - BB
+            - CC
+          required: true
+        - name: x-lbg-txn-correlation-id
+          in: header
+          description: Correlation ID
+          type: string
+          maxLength: 100
+          required: true
+        - name: x-lbg-brand
+          in: header
+          type: string
+          enum:
+            - LYDS
+            - HFX
+            - BOS
+          required: false
+        - name: x-fapi-interaction-id
+          in: header
+          type: string
+          maxLength: 100
+          required: false
+          description: An RFC4122 UID used as a correlation id.
+      responses:
+        '200':
+          description: Successful response with `Balances` data
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+              default: max-age=0
+            Etag:
+              type: string
+              description: A unique ID identifying whether this resource has changed
+            Cache-Control:
+              type: string
+              description: Describes how long this response can be cached
+              default: max-age=0
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+          schema:
+            $ref: '#/definitions/Balances'
+        '400':
+          description: You have sent a request which could not be understood.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 400
+          schema:
+            title: 400 Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '400'
+                  message:
+                    type: string
+                    enum:
+                      - Bad request
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        '404':
+          description: Requested resourse not found.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 404
+          schema:
+            title: 404 Resource not found
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '404'
+                  message:
+                    type: string
+                    enum:
+                      - Bad request
+                      - Account Details you provided for balances is not valid
+                      - Agreement ID you provided for transactions is not valid
+                      - Requested transaction resources not found
+                      - Page not found.
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        '408':
+          description: >-
+            Your client has failed to submit a request, and a timeout has
+            occurred.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 408
+          schema:
+            title: 408 Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '408'
+                  message:
+                    type: string
+                    enum:
+                      - >-
+                        Your client has failed to submit a request, and a
+                        timeout has occurred.
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        '429':
+          description: You have requested this resource too often. Slow down.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 429
+          schema:
+            title: 429 Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '429'
+                  message:
+                    type: string
+                    enum:
+                      - You have requested this resource too often. Slow down.
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        '500':
+          description: >-
+            An error occurred on the server. No further information is
+            available.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 500
+          schema:
+            title: 500 Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '500'
+                  message:
+                    type: string
+                    enum:
+                      - >-
+                        An error occurred on the server. No further information
+                        is available.
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        '503':
+          description: The service is temporarily unavailable.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 503
+          schema:
+            title: 503 Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    type: string
+                    enum:
+                      - '503'
+                  message:
+                    type: string
+                    enum:
+                      - The service is temporarily unavailable.
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        default:
+          description: A standard error response.
+          headers:
+            Strict-Transport-Security:
+              type: string
+              description: HTTPS strict transport security header
+            X-Frame-Options:
+              type: string
+              description: Prevent this request from being loaded in any iframes
+              default: DENY
+            X-Content-Type-Options:
+              type: string
+              description: >-
+                Ensures each page has a content type and prevents browsers from
+                doing MIME type sniffing
+              default: nosniff
+            Status Code:
+              type: integer
+              description: The HTTP status code defining the error
+              default: 400
+          schema:
+            title: Error object
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  statusCode:
+                    description: This corresponds to the HTTP status code
+                    type: string
+                  message:
+                    description: Further details describing the error
+                    type: string
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+definitions:
+  Balances:
+    type: object
+    properties:
+      SortCode:
+        description: Sort code
+        type: string
+      AccountNumber:
+        description: Account number
+        type: string
+      Balances:
+        description: Account Balances
+        type: array
+        items:
+          properties:
+            Amount:
+              description: Amount of money of the cash balance
+              type: string
+            CurrencyCode:
+              description: Currency Code
+              type: string
+              maxLength: 19
+            CreditDebitIndicator:
+              description: Indicates whether the balance is a credit or a debit balance
+              type: string
+            Type:
+              description: 'Balance type, in a coded form'
+              type: string
+            DateTime:
+              description: Indicates the date (and time) of the balance
+              type: string
+              format: date-time
+            CreditLine:
+              description: Credit Line
+              type: object
+              properties:
+                Included:
+                  description: >-
+                    Indicates whether or not the credit line is included in the
+                    balance of the account
+                  type: boolean
+                  enum:
+                    - true
+                    - false
+                Amount:
+                  description: Amount of money of the credit   line
+                  type: string
+                CurrencyCode:
+                  description: Currency Code
+                  type: string
+                Type:
+                  description: Limit Type
+                  type: string
+              required:
+                - Included
+              additionalProperties: false
+          required:
+            - Amount
+            - CurrencyCode
+            - CreditDebitIndicator
+            - Type
+          additionalProperties: false
+    required:
+      - AccountNumber
+      - Balances
+    additionalProperties: false
